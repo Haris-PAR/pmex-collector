@@ -1,0 +1,6 @@
+.env
+*.log
+pmex_response.json
+__pycache__/
+*.pyc
+.venv/

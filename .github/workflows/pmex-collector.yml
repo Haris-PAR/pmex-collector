@@ -1,0 +1,47 @@
+name: PMEX Crop Collector
+
+on:
+  # ── Every 15 minutes, Mon–Fri (UTC) ──────────────────────────────────────
+  # PMEX agriculture hours: 3:00 AM – midnight PST (= 10 PM – 7 PM UTC)
+  # The script's own any_agri_session_open() skips runs outside market hours,
+  # so we run all day Mon–Fri and let it self-regulate.
+  schedule:
+    - cron: '0,15,30,45 * * * 1-5'
+
+  # ── Manual trigger (use to test without waiting for schedule) ────────────
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Skip market-hours check (--force)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  collect:
+    name: Fetch & Store
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run collector
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then
+            python crop_collector.py --force
+          else
+            python crop_collector.py
+          fi
