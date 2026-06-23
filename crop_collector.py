@@ -26,7 +26,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from main import fetch_pmex
+from fetcher import fetch_pmex
 from data import (
     COMMODITY_CODES,
     parse_pmex_symbol,
