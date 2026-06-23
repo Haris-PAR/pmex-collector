@@ -41,7 +41,7 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           if [ "${{ github.event.inputs.force }}" = "true" ]; then
-            python crop_collector.py --force
+            python main.py --force
           else
-            python crop_collector.py
+            python main.py
           fi
